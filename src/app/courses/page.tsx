@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { courses, coreCourses, languageCourses } from "@/data/courses";
-import { Search, BookOpen, Tag, Sparkles, Code2, Briefcase, ChevronRight } from "lucide-react";
+import { Search, BookOpen, Tag, Sparkles, Code2, Briefcase, ChevronRight, X } from "lucide-react";
 
 const courseCardThemes: Record<string, string> = {
   // Core Tracks
@@ -67,10 +67,10 @@ export default function CoursesPage() {
   };
 
   const renderCourseCard = (course: (typeof courses)[0]) => (
-    <Link href={`/courses/${course.id}`} key={course.id}>
-      <div className="group h-full bg-white dark:bg-dark-900 rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-primary-500/10 border border-slate-200 dark:border-slate-800 transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+    <Link href={`/courses/${course.id}`} key={course.id} className="block h-full">
+      <div className="group h-full bg-white dark:bg-dark-900 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-primary-500/10 border border-slate-200 dark:border-slate-800 transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
         <div
-          className={`h-32 bg-gradient-to-r ${course.gradient} relative overflow-hidden shrink-0`}
+          className={`h-28 sm:h-32 bg-gradient-to-r ${course.gradient} relative overflow-hidden shrink-0`}
           style={{
             background:
               courseCardThemes[course.id] ||
@@ -79,44 +79,44 @@ export default function CoursesPage() {
         >
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30"></div>
-          <div className="absolute top-3 right-3">
-            <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-black/40 text-white backdrop-blur-md border border-white/20">
+          <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3">
+            <span className="text-[10px] sm:text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-black/40 text-white backdrop-blur-md border border-white/20">
               {course.category === "language" ? "💻 ภาษาโปรแกรมมิ่ง" : "🏢 สายงาน IT"}
             </span>
           </div>
-          <div className="absolute bottom-4 left-6 flex items-center">
-            <div className="bg-white/20 backdrop-blur-md p-3 rounded-2xl text-3xl shadow-sm">
+          <div className="absolute bottom-3 left-4 sm:bottom-4 sm:left-6 flex items-center">
+            <div className="bg-white/20 backdrop-blur-md p-2.5 sm:p-3 rounded-xl sm:rounded-2xl text-2xl sm:text-3xl shadow-sm">
               {course.icon}
             </div>
           </div>
         </div>
 
-        <div className="p-6 flex flex-col flex-grow">
-          <div className="flex justify-between items-start mb-3">
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+        <div className="p-4 sm:p-6 flex flex-col flex-grow">
+          <div className="flex justify-between items-start mb-2 sm:mb-3">
+            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white line-clamp-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
               {course.title}
             </h3>
           </div>
 
-          <p className="text-slate-600 dark:text-slate-300 text-sm mb-5 line-clamp-3 flex-grow leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm mb-4 sm:mb-5 line-clamp-2 sm:line-clamp-3 flex-grow leading-relaxed">
             {course.description}
           </p>
 
-          <div className="flex flex-wrap items-center gap-3 mt-auto">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-auto">
             <span
-              className={`text-xs font-semibold px-2.5 py-1 rounded-md ${getDifficultyColor(
+              className={`text-[11px] sm:text-xs font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md ${getDifficultyColor(
                 course.difficulty
               )}`}
             >
               {course.difficulty}
             </span>
-            <div className="flex items-center text-slate-500 dark:text-slate-400 text-xs font-semibold">
-              <BookOpen className="w-4 h-4 mr-1 text-primary-500" />
-              {course.lessons.length} บทเรียนเข้มข้น
+            <div className="flex items-center text-slate-500 dark:text-slate-400 text-[11px] sm:text-xs font-semibold">
+              <BookOpen className="w-3.5 h-3.5 mr-1 text-primary-500" />
+              {course.lessons.length} บทเรียน
             </div>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-1.5">
+          <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-1.5">
             {course.tags.slice(0, 3).map((tag, idx) => (
               <span
                 key={idx}
@@ -133,66 +133,78 @@ export default function CoursesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-dark-950 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto pt-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-dark-950 py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto pt-4 sm:pt-8">
         {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary-100 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 text-xs font-semibold mb-4 border border-primary-200 dark:border-primary-800">
+        <div className="text-center mb-8 sm:mb-10">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-100 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 text-xs font-semibold mb-3 sm:mb-4 border border-primary-200 dark:border-primary-800">
             <Sparkles className="w-3.5 h-3.5" />
             <span>หลักสูตรมาตรฐานเข้มข้น {courses.length} สาขาวิชา</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold gradient-text mb-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold gradient-text mb-3 sm:mb-4">
             หลักสูตรทั้งหมด
           </h1>
-          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed px-2 sm:px-0">
             เลือกเรียนได้ทั้ง <strong>หลักสูตรสายงานวิชาชีพ IT</strong> สำหรับสร้างเส้นทางอาชีพวิศวกรซอฟต์แวร์ และ <strong>หลักสูตรภาษาโปรแกรมมิ่ง</strong> เพื่อฝึกฝนทักษะการเขียนโค้ดเชิงลึก
           </p>
         </div>
 
-        {/* Category Switcher Tabs */}
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex p-1.5 rounded-2xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-slate-800 shadow-sm gap-1">
+        {/* Category Switcher Tabs (Responsive for Mobile, iPad, and Desktop) */}
+        <div className="flex justify-center mb-6 sm:mb-8 px-1 sm:px-0">
+          <div className="w-full sm:w-auto inline-flex p-1 sm:p-1.5 rounded-2xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-slate-800 shadow-sm gap-1 overflow-x-auto sm:overflow-visible hide-scrollbar">
             <button
               onClick={() => setSelectedCategory("all")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
                 selectedCategory === "all"
                   ? "bg-primary-600 text-white shadow-md shadow-primary-600/30"
                   : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-dark-800"
               }`}
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
               <span>ทุกหลักสูตร</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-white/20 dark:bg-white/10 font-bold">
+              <span className={`text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full font-bold shrink-0 ${
+                selectedCategory === "all"
+                  ? "bg-white/20 dark:bg-white/20 text-white"
+                  : "bg-slate-200/70 dark:bg-dark-700 text-slate-700 dark:text-slate-300"
+              }`}>
                 {courses.length}
               </span>
             </button>
 
             <button
               onClick={() => setSelectedCategory("core")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
                 selectedCategory === "core"
                   ? "bg-primary-600 text-white shadow-md shadow-primary-600/30"
                   : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-dark-800"
               }`}
             >
-              <Briefcase className="w-4 h-4 text-emerald-500" />
-              <span>สายงานวิชาชีพ IT</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold">
+              <Briefcase className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500 shrink-0" />
+              <span>สายงาน<span className="hidden sm:inline">วิชาชีพ</span> IT</span>
+              <span className={`text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full font-bold shrink-0 ${
+                selectedCategory === "core"
+                  ? "bg-white/25 text-white"
+                  : "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300"
+              }`}>
                 {coreCourses.length}
               </span>
             </button>
 
             <button
               onClick={() => setSelectedCategory("language")}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
                 selectedCategory === "language"
                   ? "bg-primary-600 text-white shadow-md shadow-primary-600/30"
                   : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-dark-800"
               }`}
             >
-              <Code2 className="w-4 h-4 text-blue-500" />
-              <span>ภาษาโปรแกรมมิ่ง</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-700 dark:text-blue-300 font-bold">
+              <Code2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 shrink-0" />
+              <span>ภาษาโปรแกรม<span className="hidden sm:inline">มิ่ง</span></span>
+              <span className={`text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full font-bold shrink-0 ${
+                selectedCategory === "language"
+                  ? "bg-white/25 text-white"
+                  : "bg-blue-500/20 text-blue-700 dark:text-blue-300"
+              }`}>
                 {languageCourses.length}
               </span>
             </button>
@@ -200,25 +212,33 @@ export default function CoursesPage() {
         </div>
 
         {/* Search and Difficulty Filter */}
-        <div className="flex flex-col md:flex-row gap-4 mb-10 justify-between items-center bg-white dark:bg-dark-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+        <div className="flex flex-col md:flex-row gap-3 sm:gap-4 mb-8 sm:mb-10 justify-between items-center bg-white dark:bg-dark-900 p-3 sm:p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
           <div className="relative w-full md:w-96">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-5 w-5 text-slate-400" />
+              <Search className="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" />
             </div>
             <input
               type="text"
               placeholder="ค้นหาหลักสูตร, เทคโนโลยี หรือแท็ก..."
-              className="block w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-700 rounded-xl leading-5 bg-transparent text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+              className="block w-full pl-9 sm:pl-10 pr-8 py-2 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm leading-5 bg-transparent text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
-          <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
+          <div className="grid grid-cols-4 gap-1.5 w-full sm:flex sm:w-auto overflow-x-auto pb-1 sm:pb-0 hide-scrollbar">
             {["ทั้งหมด", "เริ่มต้น", "ปานกลาง", "ขั้นสูง"].map((diff) => (
               <button
                 key={diff}
                 onClick={() => setFilterDifficulty(diff)}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${
+                className={`px-2 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap text-center transition-all ${
                   filterDifficulty === diff
                     ? "bg-primary-600 text-white shadow-md shadow-primary-600/30"
                     : "bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-dark-800 dark:text-slate-300 dark:hover:bg-dark-700"
@@ -276,7 +296,7 @@ export default function CoursesPage() {
                     {coreList.length} หลักสูตร
                   </span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                   {coreList.map((course) => renderCourseCard(course))}
                 </div>
               </div>
@@ -302,7 +322,7 @@ export default function CoursesPage() {
                     {langList.length} หลักสูตร
                   </span>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                   {langList.map((course) => renderCourseCard(course))}
                 </div>
               </div>
@@ -312,24 +332,24 @@ export default function CoursesPage() {
           /* Single Category Filtered View */
           <div>
             <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-200 dark:border-slate-800">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 {selectedCategory === "core" ? (
                   <>
-                    <Briefcase className="w-6 h-6 text-emerald-500" />
+                    <Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-500" />
                     <span>หลักสูตรสายงานวิชาชีพ IT</span>
                   </>
                 ) : (
                   <>
-                    <Code2 className="w-6 h-6 text-blue-500" />
+                    <Code2 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
                     <span>หลักสูตรภาษาโปรแกรมมิ่ง</span>
                   </>
                 )}
               </h2>
-              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-slate-200 dark:bg-dark-800 text-slate-700 dark:text-slate-300">
+              <span className="text-xs font-semibold px-2.5 sm:px-3 py-1 rounded-full bg-slate-200 dark:bg-dark-800 text-slate-700 dark:text-slate-300">
                 พบ {filteredCourses.length} หลักสูตร
               </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {filteredCourses.map((course) => renderCourseCard(course))}
             </div>
           </div>

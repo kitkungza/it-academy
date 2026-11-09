@@ -21,6 +21,7 @@ import {
   Maximize2,
   Minimize2,
   X,
+  BookOpen,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { markLessonComplete, getUser, User } from "@/lib/progress";
@@ -392,6 +393,8 @@ export default function LessonPage({
   const [isPanelCollapsed, setIsPanelCollapsed] = useState<boolean>(false);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [isDesktop, setIsDesktop] = useState<boolean>(false);
+  // Mobile & iPad Mode Switcher: "lesson" (Theory & Quiz) vs "workspace" (Editor, Simulator & Output)
+  const [mobileTab, setMobileTab] = useState<"lesson" | "workspace">("lesson");
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
@@ -564,6 +567,7 @@ export default function LessonPage({
   const runCode = () => {
     setIsRunning(true);
     setActiveTab("result");
+    setMobileTab("workspace");
     setExecutionCount((prev) => prev + 1);
     setTimeout(() => {
       setIsRunning(false);
@@ -752,19 +756,19 @@ export default function LessonPage({
             : undefined
         }
         className={`w-full flex flex-col h-auto lg:h-screen border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-dark-900 z-10 ${
-          isDragging ? "" : "transition-[width] duration-150"
-        }`}
+          mobileTab === "workspace" ? "hidden lg:flex" : "flex"
+        } ${isDragging ? "" : "transition-[width] duration-150"}`}
       >
         {/* Header Breadcrumb */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800 shrink-0 mt-16 bg-white/80 dark:bg-dark-900/80 backdrop-blur-md">
+        <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-100 dark:border-slate-800 shrink-0 mt-16 bg-white/80 dark:bg-dark-900/80 backdrop-blur-md">
           <Link
             href={`/courses/${courseId}`}
-            className="flex items-center text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-primary-500 transition-colors"
+            className="flex items-center text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-primary-500 transition-colors truncate max-w-[150px] sm:max-w-none"
           >
-            <ChevronLeft className="w-4 h-4 mr-1 text-primary-500" />
-            {course.title}
+            <ChevronLeft className="w-4 h-4 mr-1 text-primary-500 shrink-0" />
+            <span className="truncate">{course.title}</span>
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {isPanelCollapsed && (
               <button
                 onClick={toggleCollapse}
@@ -776,7 +780,7 @@ export default function LessonPage({
               </button>
             )}
             <span
-              className={`text-xs font-bold px-2 py-0.5 rounded-md ${
+              className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-md ${
                 lesson.level === "เริ่มต้น"
                   ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400"
                   : lesson.level === "ปานกลาง"
@@ -786,10 +790,39 @@ export default function LessonPage({
             >
               ระดับ{lesson.level}
             </span>
-            <span className="text-xs text-slate-400 font-medium">
+            <span className="text-[10px] sm:text-xs text-slate-400 font-medium whitespace-nowrap">
               บทที่ {lessonIndex + 1}/{course.lessons.length}
             </span>
           </div>
+        </div>
+
+        {/* Mobile & Tablet Mode Switcher (< 1024px) */}
+        <div className="flex lg:hidden bg-slate-100 dark:bg-dark-800/90 p-1 mx-3 sm:mx-4 my-2.5 rounded-2xl border border-slate-200 dark:border-slate-700/80 gap-1 shrink-0 shadow-sm">
+          <button
+            onClick={() => setMobileTab("lesson")}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              mobileTab === "lesson"
+                ? "bg-white dark:bg-dark-900 text-primary-600 dark:text-primary-400 shadow-sm"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-500" />
+            <span>เนื้อหาบทเรียน</span>
+          </button>
+          <button
+            onClick={() => setMobileTab("workspace")}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              mobileTab === "workspace"
+                ? "bg-primary-600 text-white shadow-md shadow-primary-600/30"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+            }`}
+          >
+            <Code className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400" />
+            <span>พื้นที่ปฏิบัติการ & โค้ด</span>
+            {isRunning && (
+              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
+            )}
+          </button>
         </div>
 
         {/* Content Body */}
@@ -870,6 +903,26 @@ export default function LessonPage({
                 )}
               </div>
             )}
+
+            {/* Mobile Callout to Jump to Code & Practice */}
+            <div className="lg:hidden mt-8 mb-4 p-4 rounded-2xl bg-gradient-to-r from-primary-950/40 via-indigo-950/40 to-slate-900/60 border border-primary-500/30 flex items-center justify-between shadow-sm">
+              <div>
+                <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-1.5">
+                  <Code className="w-4 h-4 text-emerald-400" />
+                  พร้อมลงมือปฏิบัติแล้วหรือยัง?
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                  สลับไปยังหน้าต่างเขียนโค้ดและทดสอบรันผลลัพธ์
+                </p>
+              </div>
+              <button
+                onClick={() => setMobileTab("workspace")}
+                className="px-3.5 py-2 bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md flex items-center gap-1 shrink-0 active:scale-95 transition-all"
+              >
+                <span>เขียนโค้ด</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -919,10 +972,55 @@ export default function LessonPage({
             ? { width: isPanelCollapsed ? "0%" : `${rightPanelWidth}%` }
             : undefined
         }
-        className={`w-full h-[55vh] lg:h-screen flex flex-col bg-slate-950 lg:mt-16 overflow-hidden ${
+        className={`w-full h-[calc(100vh-64px)] lg:h-screen flex flex-col bg-slate-950 mt-16 lg:mt-16 overflow-hidden ${
+          mobileTab === "lesson" ? "hidden lg:flex" : "flex"
+        } ${
           isPanelCollapsed ? "hidden lg:hidden" : "flex"
         } ${isDragging ? "" : "transition-[width] duration-150"}`}
       >
+        {/* Mobile & Tablet Workspace Top Bar (< 1024px) */}
+        <div className="flex lg:hidden bg-slate-900 px-3 py-2 border-b border-slate-800 justify-between items-center shrink-0">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setMobileTab("lesson")}
+              className="flex items-center gap-1 text-xs font-bold px-2.5 py-1.5 rounded-lg bg-slate-800 text-slate-200 hover:text-white hover:bg-slate-700 border border-slate-700 active:scale-95 transition-all shadow-sm"
+            >
+              <ChevronLeft className="w-4 h-4 text-primary-400" />
+              <span>เนื้อหา</span>
+            </button>
+            <span className="text-[11px] font-semibold text-slate-400 truncate max-w-[130px] sm:max-w-[220px]">
+              {lesson.title}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => copyCode(code)}
+              className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+              title="คัดลอกโค้ด"
+            >
+              {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={runCode}
+              disabled={isRunning}
+              className="flex items-center px-3 py-1.5 text-xs font-bold bg-green-600 hover:bg-green-500 active:scale-95 text-white rounded-lg shadow-sm transition-all"
+            >
+              {isRunning ? (
+                <>
+                  <span className="w-3 h-3 mr-1 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>รัน...</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-3 h-3 mr-1 fill-white" />
+                  <span>รันโค้ด</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
         {/* Practice Navigation Tabs */}
         <div className="flex bg-slate-900 border-b border-slate-800 shrink-0 overflow-x-auto hide-scrollbar">
           {/* Lab Guide Tab (If available) */}
@@ -1358,7 +1456,7 @@ export default function LessonPage({
         redirectUrl={`/courses/${courseId}/${lessonId}`}
       />
 
-      {/* Floating Restore Button when Panel is Collapsed */}
+      {/* Floating Restore Button when Panel is Collapsed (Desktop) */}
       {isPanelCollapsed && (
         <button
           onClick={toggleCollapse}
@@ -1372,6 +1470,28 @@ export default function LessonPage({
           <ChevronLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
         </button>
       )}
+
+      {/* Floating Quick Action Button for Mobile & iPad (< 1024px) */}
+      <div className="fixed bottom-4 right-4 z-40 lg:hidden pointer-events-auto">
+        {mobileTab === "lesson" ? (
+          <button
+            onClick={() => setMobileTab("workspace")}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-500 hover:to-indigo-500 text-white font-bold text-xs shadow-2xl shadow-primary-600/50 border border-white/20 active:scale-95 transition-all"
+          >
+            <Code className="w-4 h-4 text-emerald-300" />
+            <span>พื้นที่เขียนโค้ด</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        ) : (
+          <button
+            onClick={() => setMobileTab("lesson")}
+            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-full bg-slate-900/95 text-slate-100 hover:text-white font-bold text-xs shadow-2xl border border-slate-700/80 backdrop-blur-md active:scale-95 transition-all"
+          >
+            <BookOpen className="w-4 h-4 text-primary-400" />
+            <span>อ่านเนื้อหา</span>
+          </button>
+        )}
+      </div>
 
       {/* Fullscreen drag overlay to prevent iframe / Monaco mouse capture */}
       {isDragging && (

@@ -262,24 +262,24 @@ export default function CourseDetailPage() {
               {course.category === "language" ? "💻 หลักสูตรภาษาโปรแกรมมิ่ง" : "🏢 หลักสูตรสายงานวิชาชีพ IT"}
             </span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-black mb-6 text-white drop-shadow-md tracking-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-black mb-4 sm:mb-6 text-white drop-shadow-md tracking-tight">
             {course.title}
           </h1>
-          <p className="text-base md:text-lg text-slate-100 mb-8 max-w-4xl leading-relaxed font-normal drop-shadow-sm">
+          <p className="text-sm sm:text-base md:text-lg text-slate-100 mb-6 sm:mb-8 max-w-4xl leading-relaxed font-normal drop-shadow-sm">
             {course.longDescription}
           </p>
 
-          <div className="flex flex-wrap gap-3 mb-8 text-sm">
-            <div className={`flex items-center backdrop-blur-md px-4 py-2 rounded-xl border ${theme.badgeBorder} shadow-sm font-medium`}>
-              <BookOpen className="w-4 h-4 mr-2" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 mb-6 sm:mb-8 text-xs sm:text-sm">
+            <div className={`flex items-center backdrop-blur-md px-3.5 sm:px-4 py-2 rounded-xl border ${theme.badgeBorder} shadow-sm font-medium`}>
+              <BookOpen className="w-4 h-4 mr-2 shrink-0" />
               <span>{course.lessons.length} บทเรียนครอบคลุมทุกระดับ</span>
             </div>
-            <div className={`flex items-center backdrop-blur-md px-4 py-2 rounded-xl border ${theme.badgeBorder} shadow-sm font-medium`}>
-              <BarChart className="w-4 h-4 mr-2" />
+            <div className={`flex items-center backdrop-blur-md px-3.5 sm:px-4 py-2 rounded-xl border ${theme.badgeBorder} shadow-sm font-medium`}>
+              <BarChart className="w-4 h-4 mr-2 shrink-0" />
               <span>3 ระดับ: เริ่มต้น / ปานกลาง / ขั้นสูง</span>
             </div>
-            <div className={`flex items-center backdrop-blur-md px-4 py-2 rounded-xl border ${theme.badgeBorder} shadow-sm font-medium`}>
-              <Clock className="w-4 h-4 mr-2" />
+            <div className={`flex items-center backdrop-blur-md px-3.5 sm:px-4 py-2 rounded-xl border ${theme.badgeBorder} shadow-sm font-medium`}>
+              <Clock className="w-4 h-4 mr-2 shrink-0" />
               <span>~{course.lessons.length * 35} นาที</span>
             </div>
           </div>
@@ -384,12 +384,12 @@ export default function CourseDetailPage() {
             </div>
 
             {/* Level Filter Tabs */}
-            <div className="flex gap-2 p-1.5 bg-slate-200/60 dark:bg-dark-800 rounded-2xl text-xs font-semibold overflow-x-auto hide-scrollbar">
+            <div className="grid grid-cols-4 gap-1 w-full sm:w-auto p-1 sm:p-1.5 bg-slate-200/60 dark:bg-dark-800 rounded-2xl text-xs font-semibold overflow-x-auto hide-scrollbar">
               {["ทั้งหมด", "เริ่มต้น", "ปานกลาง", "ขั้นสูง"].map((lvl) => (
                 <button
                   key={lvl}
                   onClick={() => setSelectedLevel(lvl)}
-                  className={`px-3.5 py-1.5 rounded-xl transition-all whitespace-nowrap ${
+                  className={`px-2 sm:px-3.5 py-1.5 rounded-xl transition-all whitespace-nowrap text-center ${
                     selectedLevel === lvl
                       ? "bg-white dark:bg-dark-900 text-primary-600 dark:text-primary-400 shadow-sm"
                       : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
@@ -404,7 +404,7 @@ export default function CourseDetailPage() {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {filteredLessons.map((lesson, index) => {
               const isCompleted = completedLessons.includes(lesson.id);
               return (
@@ -414,15 +414,15 @@ export default function CourseDetailPage() {
                   className="block cursor-pointer"
                 >
                   <div
-                    className={`group flex items-start p-5 rounded-2xl border transition-all duration-200 ${
+                    className={`group flex items-start p-3.5 sm:p-5 rounded-2xl border transition-all duration-200 ${
                       isCompleted
                         ? "bg-slate-50 border-slate-200 dark:bg-dark-800/40 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-dark-800"
                         : "bg-white border-slate-200 dark:bg-dark-900 dark:border-slate-800 hover:shadow-lg hover:border-primary-500/50 dark:hover:border-primary-500/50 transform hover:-translate-y-0.5"
                     }`}
                   >
-                    <div className="flex-shrink-0 mr-4 flex flex-col items-center">
+                    <div className="flex-shrink-0 mr-3 sm:mr-4 flex flex-col items-center">
                       <div
-                        className={`w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-base transition-colors ${
+                        className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl flex items-center justify-center font-bold text-sm sm:text-base transition-colors ${
                           isCompleted
                             ? "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
                             : "bg-slate-100 text-slate-600 dark:bg-dark-800 dark:text-slate-300 group-hover:bg-primary-500 group-hover:text-white"
