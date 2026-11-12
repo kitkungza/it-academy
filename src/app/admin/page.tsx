@@ -1426,13 +1426,26 @@ export default function AdminDashboardPage() {
                     }
                     className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500"
                   >
-                    <option value="ปวช. 1">ปวช. 1</option>
-                    <option value="ปวช. 2">ปวช. 2</option>
-                    <option value="ปวช. 3">ปวช. 3</option>
-                    <option value="ปวส. 1">ปวส. 1</option>
-                    <option value="ปวส. 2">ปวส. 2</option>
-                    <option value="ปริญญาตรี">ปริญญาตรี</option>
-                    <option value="อาจารย์ผู้สอน">อาจารย์ผู้สอน</option>
+                    <optgroup label="สายสามัญ (ม.1 - ม.6)">
+                      <option value="มัธยมศึกษาปีที่ 1 (ม.1)">มัธยมศึกษาปีที่ 1 (ม.1)</option>
+                      <option value="มัธยมศึกษาปีที่ 2 (ม.2)">มัธยมศึกษาปีที่ 2 (ม.2)</option>
+                      <option value="มัธยมศึกษาปีที่ 3 (ม.3)">มัธยมศึกษาปีที่ 3 (ม.3)</option>
+                      <option value="มัธยมศึกษาปีที่ 4 (ม.4)">มัธยมศึกษาปีที่ 4 (ม.4)</option>
+                      <option value="มัธยมศึกษาปีที่ 5 (ม.5)">มัธยมศึกษาปีที่ 5 (ม.5)</option>
+                      <option value="มัธยมศึกษาปีที่ 6 (ม.6)">มัธยมศึกษาปีที่ 6 (ม.6)</option>
+                    </optgroup>
+                    <optgroup label="สายอาชีวศึกษา (ปวช. / ปวส.)">
+                      <option value="ปวช. 1">ปวช. 1</option>
+                      <option value="ปวช. 2">ปวช. 2</option>
+                      <option value="ปวช. 3">ปวช. 3</option>
+                      <option value="ปวส. 1">ปวส. 1</option>
+                      <option value="ปวส. 2">ปวส. 2</option>
+                    </optgroup>
+                    <optgroup label="ระดับอุดมศึกษา และอื่นๆ">
+                      <option value="ระดับปริญญาตรี">ระดับปริญญาตรี</option>
+                      <option value="อาจารย์ผู้สอน">อาจารย์ผู้สอน</option>
+                      <option value="บุคคลทั่วไป">บุคคลทั่วไป</option>
+                    </optgroup>
                   </select>
                 </div>
 

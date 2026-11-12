@@ -25,12 +25,23 @@ import {
 import { VOCATIONAL_INSTITUTIONS } from "@/data/institutions";
 
 const SUGGESTED_DEPTS = [
+  // สายสามัญศึกษา (มัธยมศึกษา ม.1 - ม.6)
+  "แผนการเรียนวิทยาศาสตร์ - คณิตศาสตร์ (วิทย์-คณิต)",
+  "แผนการเรียนคณิตศาสตร์ - ภาษาอังกฤษ (ศิลป์-คำนวณ)",
+  "แผนการเรียนภาษาต่างประเทศ (ศิลป์-ภาษา)",
+  "แผนการเรียนคอมพิวเตอร์และเทคโนโลยีดิจิทัล",
+  "ห้องเรียนพิเศษวิทยาศาสตร์และเทคโนโลยี (SMTE / Gifted / STEM)",
+  "มัธยมศึกษาตอนต้น (หลักสูตรแกนกลาง / ห้องเรียนปกติ)",
+  // สายอาชีวศึกษา (ปวช. / ปวส.)
   "แผนกวิชาเทคโนโลยีสารสนเทศ (IT)",
   "แผนกวิชาช่างเทคนิคคอมพิวเตอร์",
   "แผนกวิชาคอมพิวเตอร์ธุรกิจ / เทคโนโลยีดิจิทัล",
   "แผนกวิชาอิเล็กทรอนิกส์และโทรคมนาคม",
-  "สาขาวิชาวิทยาการคอมพิวเตอร์",
-  "สาขาวิชาวิศวกรรมคอมพิวเตอร์",
+  "แผนกวิชาเมคคาทรอนิกส์และหุ่นยนต์",
+  // ระดับอุดมศึกษา
+  "สาขาวิชาวิทยาการคอมพิวเตอร์ (Computer Science)",
+  "สาขาวิชาวิศวกรรมคอมพิวเตอร์ (Computer Engineering)",
+  "สาขาวิชาเทคโนโลยีสารสนเทศ (Information Technology)",
 ];
 
 export default function RegisterPage() {
@@ -43,7 +54,7 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [institution, setInstitution] = useState("");
   const [department, setDepartment] = useState("");
-  const [educationLevel, setEducationLevel] = useState("ปวส.");
+  const [educationLevel, setEducationLevel] = useState("มัธยมศึกษาปีที่ 4 (ม.4)");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -254,11 +265,11 @@ export default function RegisterPage() {
           <div className="w-16 h-16 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mb-4 shadow-xl shadow-blue-500/20 text-white">
             <UserPlus className="w-8 h-8" />
           </div>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">
-            สมัครสมาชิกนักศึกษา IT Academy
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+            สมัครสมาชิก IT Academy
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
-            บันทึกข้อมูลการศึกษา บัญชีผู้ใช้ และระบบยืนยันตัวตนผ่านอีเมลจริง
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2">
+            รองรับนักเรียนสายสามัญ (ม.1 - ม.6), อาชีวศึกษา (ปวช./ปวส.), มหาวิทยาลัย และผู้สนใจทั่วไป
           </p>
         </div>
 
@@ -294,23 +305,23 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl dark:bg-slate-950 bg-slate-50 border dark:border-slate-800 border-slate-300 dark:text-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
-                placeholder="เช่น student@vec.ac.th หรือ gmail.com"
+                placeholder="เช่น student@gmail.com หรือ student@school.ac.th"
                 required
               />
             </div>
           </div>
 
-          {/* ข้อมูลสถาบันการศึกษา (หัวใจหลักที่ผู้ใช้ขอ) */}
+          {/* ข้อมูลสถาบันการศึกษา */}
           <div className="p-4 rounded-2xl bg-blue-50/50 dark:bg-slate-950/60 border border-blue-100 dark:border-slate-800/80 space-y-4">
             <div className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 flex items-center gap-2">
               <Building2 className="w-4 h-4" />
-              ข้อมูลสถานศึกษา / วิทยาลัยที่กำลังศึกษา
+              ข้อมูลสถานศึกษา / โรงเรียน / วิทยาลัยที่กำลังศึกษา
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  วิทยาลัย / โรงเรียน / มหาวิทยาลัย
+                  โรงเรียน / วิทยาลัย / มหาวิทยาลัย
                 </label>
                 <input
                   type="text"
@@ -318,7 +329,7 @@ export default function RegisterPage() {
                   onChange={(e) => setInstitution(e.target.value)}
                   list="colleges-list"
                   className="w-full px-4 py-2.5 rounded-xl dark:bg-slate-900 bg-white border dark:border-slate-700 border-slate-300 dark:text-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
-                  placeholder="เช่น วิทยาลัยเทคนิคเชียงใหม่"
+                  placeholder="เช่น โรงเรียนสวนกุหลาบวิทยาลัย หรือ วิทยาลัยเทคนิคเชียงใหม่"
                   required
                 />
                 <datalist id="colleges-list">
@@ -337,23 +348,35 @@ export default function RegisterPage() {
                 <select
                   value={educationLevel}
                   onChange={(e) => setEducationLevel(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl dark:bg-slate-900 bg-white border dark:border-slate-700 border-slate-300 dark:text-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl dark:bg-slate-900 bg-white border dark:border-slate-700 border-slate-300 dark:text-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all cursor-pointer font-medium"
                 >
-                  <option value="ปวช. 1">ปวช. 1 (ประกาศนียบัตรวิชาชีพ ปี 1)</option>
-                  <option value="ปวช. 2">ปวช. 2 (ประกาศนียบัตรวิชาชีพ ปี 2)</option>
-                  <option value="ปวช. 3">ปวช. 3 (ประกาศนียบัตรวิชาชีพ ปี 3)</option>
-                  <option value="ปวส. 1">ปวส. 1 (ประกาศนียบัตรวิชาชีพชั้นสูง ปี 1)</option>
-                  <option value="ปวส. 2">ปวส. 2 (ประกาศนียบัตรวิชาชีพชั้นสูง ปี 2)</option>
-                  <option value="ปริญญาตรี">ระดับปริญญาตรี (ปี 1 - 4)</option>
-                  <option value="อาจารย์/ผู้สอน">อาจารย์ / ผู้สอน / บุคลากร</option>
-                  <option value="บุคคลทั่วไป">บุคคลทั่วไป / ทำงานสายไอที</option>
+                  <optgroup label="🎒 สายสามัญศึกษา (มัธยมศึกษา ม.1 - ม.6)">
+                    <option value="มัธยมศึกษาปีที่ 1 (ม.1)">มัธยมศึกษาปีที่ 1 (ม.1)</option>
+                    <option value="มัธยมศึกษาปีที่ 2 (ม.2)">มัธยมศึกษาปีที่ 2 (ม.2)</option>
+                    <option value="มัธยมศึกษาปีที่ 3 (ม.3)">มัธยมศึกษาปีที่ 3 (ม.3)</option>
+                    <option value="มัธยมศึกษาปีที่ 4 (ม.4)">มัธยมศึกษาปีที่ 4 (ม.4)</option>
+                    <option value="มัธยมศึกษาปีที่ 5 (ม.5)">มัธยมศึกษาปีที่ 5 (ม.5)</option>
+                    <option value="มัธยมศึกษาปีที่ 6 (ม.6)">มัธยมศึกษาปีที่ 6 (ม.6)</option>
+                  </optgroup>
+                  <optgroup label="⚙️ สายอาชีวศึกษา (ปวช. / ปวส.)">
+                    <option value="ปวช. 1">ปวช. 1 (ประกาศนียบัตรวิชาชีพ ปี 1)</option>
+                    <option value="ปวช. 2">ปวช. 2 (ประกาศนียบัตรวิชาชีพ ปี 2)</option>
+                    <option value="ปวช. 3">ปวช. 3 (ประกาศนียบัตรวิชาชีพ ปี 3)</option>
+                    <option value="ปวส. 1">ปวส. 1 (ประกาศนียบัตรวิชาชีพชั้นสูง ปี 1)</option>
+                    <option value="ปวส. 2">ปวส. 2 (ประกาศนียบัตรวิชาชีพชั้นสูง ปี 2)</option>
+                  </optgroup>
+                  <optgroup label="🎓 ระดับอุดมศึกษา และอื่นๆ">
+                    <option value="ระดับปริญญาตรี">ระดับปริญญาตรี (ปี 1 - 4)</option>
+                    <option value="อาจารย์/ผู้สอน">อาจารย์ / ครูผู้สอน / บุคลากรทางการศึกษา</option>
+                    <option value="บุคคลทั่วไป">บุคคลทั่วไป / ผู้ที่สนใจศึกษาด้านไอที</option>
+                  </optgroup>
                 </select>
               </div>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                <BookOpen className="w-3.5 h-3.5 text-blue-500" /> แผนกวิชา / สาขางาน
+                <BookOpen className="w-3.5 h-3.5 text-blue-500" /> แผนกวิชา / สาขางาน หรือ สายการเรียน (สำหรับ ม.1-6)
               </label>
               <input
                 type="text"
@@ -361,7 +384,7 @@ export default function RegisterPage() {
                 onChange={(e) => setDepartment(e.target.value)}
                 list="depts-list"
                 className="w-full px-4 py-2.5 rounded-xl dark:bg-slate-900 bg-white border dark:border-slate-700 border-slate-300 dark:text-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
-                placeholder="เช่น แผนกวิชาเทคโนโลยีสารสนเทศ หรือ ช่างเทคนิคคอมพิวเตอร์"
+                placeholder="เช่น วิทย์-คณิต, ศิลป์-คำนวณ หรือ แผนกเทคโนโลยีสารสนเทศ"
                 required
               />
               <datalist id="depts-list">
