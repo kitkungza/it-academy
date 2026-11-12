@@ -22,14 +22,14 @@ import {
 
 const FeatureCard = ({ icon: Icon, title, description }: any) => {
   return (
-    <div className="relative group rounded-2xl p-[1px] bg-gradient-to-b from-slate-200 to-transparent dark:from-white/10 dark:to-transparent">
+    <div className="relative group rounded-2xl p-[1px] bg-gradient-to-b from-[#E8E1D5] to-transparent dark:from-white/10 dark:to-transparent">
       <div className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-cyber-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="relative h-full bg-white dark:bg-dark-800/80 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 rounded-2xl p-6 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow">
+      <div className="relative h-full bg-white dark:bg-dark-800/80 backdrop-blur-xl border border-[#E8E1D5] dark:border-white/10 rounded-2xl p-6 flex flex-col items-center text-center shadow-sm shadow-amber-950/5 hover:shadow-md transition-shadow">
         <div className="p-4 bg-primary-500/10 rounded-full text-primary-500 mb-4 group-hover:scale-110 transition-transform duration-300">
           <Icon className="w-8 h-8" />
         </div>
         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{title}</h3>
-        <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">{description}</p>
+        <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{description}</p>
       </div>
     </div>
   );
@@ -48,8 +48,8 @@ const CourseCard = ({ course }: any) => {
         <div className={`absolute inset-0 bg-gradient-to-br ${course.gradient} opacity-40 rounded-2xl group-hover:opacity-100 transition-opacity blur-sm`} />
         <div className={`absolute inset-0 bg-gradient-to-br ${course.gradient} opacity-0 group-hover:opacity-20 rounded-2xl transition-opacity duration-300`} />
         
-        <div className="relative h-full bg-white dark:bg-dark-900 border border-slate-200 dark:border-white/10 rounded-2xl p-6 flex flex-col z-10 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 dark:bg-white/5 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110" />
+        <div className="relative h-full bg-white dark:bg-dark-900 border border-[#E8E1D5] dark:border-white/10 rounded-2xl p-6 flex flex-col z-10 overflow-hidden shadow-sm shadow-amber-950/5 hover:shadow-md transition-shadow">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#FAF7F2] dark:bg-white/5 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110" />
           
           <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${course.iconBg} ${course.iconColor}`}>
             {course.emoji ? (
@@ -60,14 +60,14 @@ const CourseCard = ({ course }: any) => {
           </div>
           
           <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{course.title}</h3>
-          <p className="text-slate-600 dark:text-slate-300 text-sm mb-6 flex-grow leading-relaxed">{course.description}</p>
+          <p className="text-slate-700 dark:text-slate-300 text-sm mb-6 flex-grow leading-relaxed">{course.description}</p>
           
           <div className="mt-auto space-y-4">
             <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
               <span>{course.lessons} บทเรียน</span>
               <span className="font-semibold text-primary-600 dark:text-primary-400">ความคืบหน้า {progress}%</span>
             </div>
-            <div className="w-full bg-slate-100 dark:bg-dark-800 rounded-full h-1.5 overflow-hidden">
+            <div className="w-full bg-[#FAF7F2] dark:bg-dark-800 rounded-full h-1.5 overflow-hidden">
               <div
                 className="bg-primary-500 h-1.5 rounded-full transition-all duration-1000"
                 style={{ width: `${progress}%` }}
@@ -364,7 +364,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen dark:bg-dark-950 bg-gray-50 font-sans overflow-x-hidden selection:bg-primary-500/30">
+    <div className="min-h-screen dark:bg-dark-950 bg-[#FAF7F2] font-sans overflow-x-hidden selection:bg-primary-500/30 transition-colors duration-200">
       <style jsx global>{`
         .fade-up {
           opacity: 0;
@@ -381,75 +381,132 @@ export default function Home() {
       `}</style>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary-50 via-white to-white dark:from-dark-950 dark:via-dark-900 dark:to-dark-950">
-          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary-500/15 dark:bg-primary-500/20 blur-[120px] mix-blend-screen animate-pulse" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-cyber-500/15 dark:bg-cyber-500/20 blur-[120px] mix-blend-screen animate-pulse" />
-          <div className="absolute top-[40%] left-[60%] w-[30%] h-[30%] rounded-full bg-accent-500/10 blur-[100px] mix-blend-screen" />
+      <section className="relative min-h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden">
+        {/* Soft Warm Cream Gradient for Light Mode, Deep Slate for Dark Mode */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F2ECE1] via-[#FAF7F2] to-[#FAF7F2] dark:from-dark-950 dark:via-dark-900 dark:to-dark-950">
+          <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full bg-blue-500/10 dark:bg-primary-500/20 blur-[130px] dark:mix-blend-screen animate-pulse pointer-events-none" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full bg-purple-500/10 dark:bg-cyber-500/20 blur-[130px] dark:mix-blend-screen animate-pulse pointer-events-none" />
+          <div className="absolute top-[35%] left-[55%] w-[35%] h-[35%] rounded-full bg-amber-500/10 dark:bg-accent-500/10 blur-[110px] pointer-events-none" />
         </div>
 
+        {/* Decorative Floating Tech Chips */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-10 dark:text-primary-500/20 text-primary-500/15 text-6xl font-mono animate-float">&lt;/&gt;</div>
-          <div className="absolute bottom-1/3 right-12 dark:text-cyber-500/20 text-cyber-500/15 text-6xl font-mono animate-float" style={{animationDelay: '2s'}}>&#123; &#125;</div>
-          <div className="absolute top-1/3 right-1/4 dark:text-accent-500/20 text-accent-500/15 text-4xl font-mono animate-float" style={{animationDelay: '4s'}}>[ ]</div>
+          <div className="absolute top-1/4 left-4 sm:left-10 px-3 py-1.5 rounded-xl border border-blue-500/20 bg-white/80 dark:bg-dark-800/70 shadow-sm backdrop-blur-md text-xs font-mono text-blue-600 dark:text-blue-400 font-bold animate-float">
+            &lt;code&gt; Python &amp; Next.js
+          </div>
+          <div
+            className="absolute bottom-1/3 right-4 sm:right-12 px-3 py-1.5 rounded-xl border border-purple-500/20 bg-white/80 dark:bg-dark-800/70 shadow-sm backdrop-blur-md text-xs font-mono text-purple-600 dark:text-purple-400 font-bold animate-float"
+            style={{ animationDelay: "2s" }}
+          >
+            &#123; SQL &amp; Cisco IoT &#125;
+          </div>
+          <div
+            className="absolute top-1/3 right-1/4 px-2.5 py-1 rounded-lg border border-amber-500/20 bg-white/70 dark:bg-dark-800/60 shadow-sm backdrop-blur-md text-xs font-mono text-amber-600 dark:text-amber-400 font-bold animate-float hidden md:block"
+            style={{ animationDelay: "4s" }}
+          >
+            [ Rust &amp; Assembly ]
+          </div>
         </div>
 
-        <div className="container mx-auto px-6 relative z-10 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full dark:bg-dark-800/80 bg-primary-50 border dark:border-dark-700 border-primary-200 text-primary-600 dark:text-primary-400 text-sm font-semibold mb-8 fade-up shadow-sm">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center">
+          {/* Top Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/85 dark:bg-dark-800/80 border border-[#E0D8CB] dark:border-dark-700 text-blue-700 dark:text-blue-300 text-xs sm:text-sm font-semibold mb-6 fade-up shadow-sm">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-600 dark:bg-blue-400"></span>
             </span>
-            พร้อมให้บริการแล้ววันนี้
+            🚀 แพลตฟอร์มการเรียนรู้และฝึกปฏิบัติการ IT มาตรฐานอาชีวศึกษา 2026
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 fade-up">
-            <span className="text-slate-900 dark:text-white">เรียนรู้ IT ทุกสาขา </span>
-            <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-teal-500 to-purple-600 dark:from-primary-400 dark:via-accent-300 dark:to-cyber-400">
-              ในที่เดียว
+          {/* Main Heading with Thai-friendly Line Height & Clear Contrast */}
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-normal leading-[1.25] sm:leading-[1.2] lg:leading-[1.2] mb-6 pt-3 fade-up">
+            <span className="block text-slate-900 dark:text-white pb-1 drop-shadow-sm">
+              เรียนรู้ IT ทุกสาขาวิชาชีพ
+            </span>
+            <span className="block pt-1 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-cyan-300 dark:to-purple-400">
+              ในที่เดียว บนเว็บเบราว์เซอร์
             </span>
           </h1>
           
-          <p className="mt-6 text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-10 fade-up leading-relaxed">
-            แพลตฟอร์มการเรียนรู้ครบวงจรสำหรับนักเรียน IT พร้อมลงมือเขียนโค้ดจริงในเว็บ เรียนง่าย เข้าใจเร็ว ประยุกต์ใช้ได้จริง
+          {/* Subtitle with High Legibility */}
+          <p className="mt-4 text-base sm:text-lg md:text-xl text-slate-700 dark:text-slate-300 max-w-3xl mx-auto mb-10 fade-up leading-relaxed font-normal">
+            แพลตฟอร์มการเรียนรู้ครบวงจรสำหรับนักเรียน-นักศึกษา IT และผู้สนใจ พร้อมลงมือเขียนโค้ดจริงบนเว็บเบราว์เซอร์
+            เรียนง่าย เข้าใจเร็ว ประยุกต์ใช้ในการทำงานจริงได้ทันที
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 fade-up">
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14 fade-up">
             <Link 
               href="/courses" 
-              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-primary-600 to-blue-600 hover:from-primary-500 hover:to-blue-500 text-white rounded-xl font-semibold shadow-lg shadow-primary-500/25 transition-all hover:scale-105 flex items-center justify-center gap-2 group"
+              className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-bold text-sm sm:text-base shadow-xl shadow-blue-500/25 transition-all hover:scale-105 flex items-center justify-center gap-2 group cursor-pointer"
             >
-              เริ่มเรียนฟรี
+              <span>เริ่มเรียนฟรีทุกหลักสูตร</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
             <Link 
               href="/playground" 
-              className="w-full sm:w-auto px-8 py-4 bg-white dark:bg-dark-800/80 hover:bg-slate-50 dark:hover:bg-dark-700 text-slate-800 dark:text-white border border-slate-300 dark:border-dark-700 rounded-xl font-semibold shadow-sm transition-all hover:scale-105 flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-8 py-4 bg-white/90 dark:bg-dark-800/80 hover:bg-white dark:hover:bg-dark-700 text-slate-800 dark:text-white border border-[#E0D8CB] dark:border-dark-700 rounded-xl font-bold text-sm sm:text-base shadow-sm transition-all hover:scale-105 flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Terminal className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-              ทดลอง Playground
+              <Terminal className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+              <span>ทดลองเขียนโค้ด Playground</span>
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-8 border-t border-slate-200 dark:border-dark-800 fade-up">
-            {[
-              { label: "22 หลักสูตร", value: "7 สายงาน & 15 ภาษา" },
-              { label: "198 บทเรียน", value: "เนื้อหาเชิงลึกระดับสากล" },
-              { label: "เขียนโค้ดได้จริง", value: "Interactive Compiler" },
-              { label: "ฟรี 100%", value: "เพื่อการศึกษาไทย" }
-            ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <div className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mb-1">{stat.label}</div>
-                <div className="text-xs md:text-sm text-slate-500 dark:text-slate-400 font-medium">{stat.value}</div>
-              </div>
-            ))}
+          {/* Redesigned 4-Card Statistics Bar */}
+          <div className="max-w-4xl mx-auto pt-6 pb-4 fade-up">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 p-4 rounded-3xl bg-white/80 dark:bg-dark-900/80 backdrop-blur-xl border border-[#E8E1D5] dark:border-dark-800 shadow-md shadow-amber-950/5 dark:shadow-none">
+              {[
+                {
+                  icon: BookOpen,
+                  label: "23 สาขาวิชา",
+                  value: "7 สายงานหลัก & 16 ภาษา",
+                  color: "text-blue-600 dark:text-blue-400",
+                  bg: "bg-blue-500/10",
+                },
+                {
+                  icon: Trophy,
+                  label: "200+ บทเรียน",
+                  value: "เนื้อหาเข้มข้น มีแบบฝึกหัด",
+                  color: "text-indigo-600 dark:text-indigo-400",
+                  bg: "bg-indigo-500/10",
+                },
+                {
+                  icon: Terminal,
+                  label: "รันโค้ดสดในเว็บ",
+                  value: "Interactive Compiler ทันที",
+                  color: "text-purple-600 dark:text-purple-400",
+                  bg: "bg-purple-500/10",
+                },
+                {
+                  icon: Users,
+                  label: "ฟรี 100%",
+                  value: "เพื่อเด็กอาชีวะและคนไทย",
+                  color: "text-emerald-600 dark:text-emerald-400",
+                  bg: "bg-emerald-500/10",
+                },
+              ].map((stat, i) => (
+                <div
+                  key={i}
+                  className="p-3.5 sm:p-4 rounded-2xl bg-[#FAF7F2]/80 dark:bg-dark-800/50 border border-[#EFE9DF] dark:border-dark-700/50 flex flex-col items-center text-center transition-all hover:scale-[1.02]"
+                >
+                  <div className={`p-2.5 rounded-xl ${stat.bg} ${stat.color} mb-2`}>
+                    <stat.icon className="w-5 h-5" />
+                  </div>
+                  <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                    {stat.label}
+                  </div>
+                  <div className="text-xs text-slate-600 dark:text-slate-400 mt-1 font-medium leading-tight">
+                    {stat.value}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-slate-50/60 dark:bg-dark-900 relative">
+      <section className="py-24 bg-[#F4EFE6]/80 dark:bg-dark-900 relative">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16 fade-up">
             <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-4">ทำไมต้อง IT Academy?</h2>
@@ -469,31 +526,31 @@ export default function Home() {
       </section>
 
       {/* Courses Section */}
-      <section className="py-24 bg-white dark:bg-dark-950 relative overflow-hidden">
+      <section className="py-24 bg-[#FAF7F2] dark:bg-dark-950 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-primary-900/10 to-transparent pointer-events-none" />
         
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 fade-up">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-100 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 text-xs font-semibold mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 dark:bg-primary-950/60 text-blue-700 dark:text-primary-300 text-xs font-semibold mb-2 border border-blue-500/20">
                 <span>เลือกเรียนได้ตามเป้าหมายของคุณ</span>
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-2">
                 หลักสูตรที่เปิดสอน
               </h2>
-              <p className="text-slate-600 dark:text-slate-300 text-base md:text-lg">
+              <p className="text-slate-700 dark:text-slate-300 text-base md:text-lg">
                 ยกระดับทักษะจากศูนย์สู่มืออาชีพ ครอบคลุมทั้งสายงานวิศวกรรม IT และภาษาโปรแกรมมิ่ง
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
-              <div className="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-dark-900 border border-slate-200 dark:border-slate-800">
+              <div className="inline-flex p-1 rounded-xl bg-[#F4EFE6] dark:bg-dark-900 border border-[#E8E1D5] dark:border-slate-800">
                 <button
                   onClick={() => setHomeCategory("core")}
                   className={`px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all ${
                     homeCategory === "core"
                       ? "bg-white dark:bg-dark-800 text-slate-900 dark:text-white shadow-sm"
-                      : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                      : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                   }`}
                 >
                   🏢 สายงาน IT ({coreCoursesList.length})
@@ -503,7 +560,7 @@ export default function Home() {
                   className={`px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all ${
                     homeCategory === "language"
                       ? "bg-white dark:bg-dark-800 text-slate-900 dark:text-white shadow-sm"
-                      : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                      : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                   }`}
                 >
                   💻 ภาษาโปรแกรมมิ่ง ({languageCoursesList.length})
@@ -512,7 +569,7 @@ export default function Home() {
 
               <Link
                 href="/courses"
-                className="hidden md:flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-semibold text-sm transition-colors"
+                className="hidden md:flex items-center text-blue-600 dark:text-primary-400 hover:text-blue-700 dark:hover:text-primary-300 font-semibold text-sm transition-colors"
               >
                 ดูทั้งหมด {coreCoursesList.length + languageCoursesList.length} หลักสูตร <ArrowRight className="w-4 h-4 ml-1" />
               </Link>
@@ -530,15 +587,15 @@ export default function Home() {
       </section>
 
       {/* Code Playground Preview */}
-      <section className="py-24 bg-slate-50 dark:bg-dark-900/90 relative border-y border-slate-200 dark:border-dark-800">
+      <section className="py-24 bg-[#F4EFE6]/80 dark:bg-dark-900/90 relative border-y border-[#E8E1D5] dark:border-dark-800">
         <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="fade-up">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 text-teal-600 dark:text-teal-400 text-sm font-semibold mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/10 text-teal-700 dark:text-teal-400 text-sm font-semibold mb-6 border border-teal-500/20">
                 <Terminal className="w-4 h-4" /> Built-in Editor
               </div>
               <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-6">ลงมือเขียนโค้ดได้เลย</h2>
-              <p className="text-slate-600 dark:text-slate-300 text-lg mb-8 leading-relaxed">
+              <p className="text-slate-700 dark:text-slate-300 text-lg mb-8 leading-relaxed">
                 ไม่ต้องสลับหน้าจอ ไม่ต้องเสียเวลาเซ็ตอัพสภาพแวดล้อม 
                 ด้วย IT Academy Playground คุณสามารถเรียนรู้ ทฤษฎี และลงมือปฏิบัติได้ในหน้าเดียว 
                 เห็นผลลัพธ์ทันทีแบบเรียลไทม์
@@ -546,9 +603,9 @@ export default function Home() {
               
               <ul className="space-y-4 mb-8">
                 {['รองรับ HTML, CSS, JavaScript, Python, SQL', 'Editor คุณภาพสูงระดับ VS Code (Monaco)', 'ดูผลลัพธ์แบบเรียลไทม์ ไม่ต้องรีเฟรช'].map((item, i) => (
-                  <li key={i} className="flex items-center text-slate-700 dark:text-slate-200 font-medium">
-                    <div className="w-5 h-5 rounded-full bg-primary-500/20 flex items-center justify-center mr-3 flex-shrink-0">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary-500" />
+                  <li key={i} className="flex items-center text-slate-800 dark:text-slate-200 font-medium">
+                    <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center mr-3 flex-shrink-0">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400" />
                     </div>
                     {item}
                   </li>
@@ -557,7 +614,7 @@ export default function Home() {
 
               <Link 
                 href="/playground" 
-                className="inline-flex px-6 py-3 bg-primary-50 dark:bg-dark-800 hover:bg-primary-100 dark:hover:bg-dark-700 text-primary-700 dark:text-primary-300 rounded-xl font-semibold transition-all hover:scale-105 items-center gap-2 border border-primary-200 dark:border-dark-700 shadow-sm"
+                className="inline-flex px-6 py-3 bg-white dark:bg-dark-800 hover:bg-[#FAF7F2] dark:hover:bg-dark-700 text-slate-800 dark:text-primary-300 rounded-xl font-semibold transition-all hover:scale-105 items-center gap-2 border border-[#E8E1D5] dark:border-dark-700 shadow-sm"
               >
                 เปิด Playground <Play className="w-4 h-4" />
               </Link>

@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { getMongoDb } from "./mongodb";
+import { sendPasswordResetEmail } from "./mailer";
 
 export interface DbUser {
   id: string;
@@ -24,6 +25,7 @@ export interface OtpRecord {
   expiresAt: number;
   createdAt: number;
   attempts?: number;
+  purpose?: "verify_email" | "reset_password";
 }
 
 export interface SessionRecord {
@@ -436,8 +438,17 @@ export async function resendOtpForEmail(
   return { success: true, message: `ส่งรหัส OTP ใหม่ไปยัง ${cleanEmail} สำเร็จ`, otpCode };
 }
 
+export function maskEmail(email: string): string {
+  if (!email || !email.includes("@")) return email;
+  const [user, domain] = email.split("@");
+  if (user.length <= 2) {
+    return `${user[0] || "*"}***@${domain}`;
+  }
+  return `${user[0]}***${user[user.length - 1]}@${domain}`;
+}
+
 export async function loginUser(
-  email: string,
+  identifier: string,
   password: string
 ): Promise<{
   success: boolean;
@@ -447,28 +458,38 @@ export async function loginUser(
   isUnverified?: boolean;
   otpCode?: string;
 }> {
-  const cleanEmail = email.trim().toLowerCase();
+  const cleanId = identifier.trim();
+  const cleanEmail = cleanId.toLowerCase();
   const mongo = await getMongoDb();
 
   if (mongo) {
     await ensureMongoSeed(mongo);
-    const user = (await mongo.collection("users").findOne({ email: cleanEmail }, { projection: { _id: 0 } })) as unknown as DbUser | null;
+    const user = (await mongo.collection("users").findOne({
+      $or: [
+        { email: cleanEmail },
+        { name: cleanId },
+        { id: cleanId },
+      ]
+    }, { projection: { _id: 0 } })) as unknown as DbUser | null;
+
     if (!user) {
-      return { success: false, message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" };
+      return { success: false, message: "อีเมล/ชื่อผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง" };
     }
 
     if (!verifyPasswordHash(password, user.salt, user.passwordHash)) {
-      return { success: false, message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" };
+      return { success: false, message: "อีเมล/ชื่อผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง" };
     }
 
     if (!user.isVerified) {
       const otpCode = generateOtp();
-      await mongo.collection("otps").deleteMany({ email: cleanEmail });
+      await mongo.collection("otps").deleteMany({ email: user.email });
       await mongo.collection("otps").insertOne({
-        email: cleanEmail,
+        email: user.email,
         code: otpCode,
         expiresAt: Date.now() + 10 * 60 * 1000,
         createdAt: Date.now(),
+        attempts: 0,
+        purpose: "verify_email",
       });
 
       return {
@@ -491,23 +512,31 @@ export async function loginUser(
   }
 
   const db = ensureDbFile();
-  const user = db.users.find((u) => u.email.toLowerCase() === cleanEmail);
+  const user = db.users.find(
+    (u) =>
+      u.email.toLowerCase() === cleanEmail ||
+      u.name.toLowerCase() === cleanEmail ||
+      u.id.toLowerCase() === cleanEmail
+  );
+
   if (!user) {
-    return { success: false, message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" };
+    return { success: false, message: "อีเมล/ชื่อผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง" };
   }
 
   if (!verifyPasswordHash(password, user.salt, user.passwordHash)) {
-    return { success: false, message: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" };
+    return { success: false, message: "อีเมล/ชื่อผู้ใช้ หรือรหัสผ่านไม่ถูกต้อง" };
   }
 
   if (!user.isVerified) {
     const otpCode = generateOtp();
-    db.otps = db.otps.filter((o) => o.email.toLowerCase() !== cleanEmail);
+    db.otps = db.otps.filter((o) => o.email.toLowerCase() !== user.email.toLowerCase());
     db.otps.push({
       email: user.email,
       code: otpCode,
       expiresAt: Date.now() + 10 * 60 * 1000,
       createdAt: Date.now(),
+      attempts: 0,
+      purpose: "verify_email",
     });
     saveDb(db);
 
@@ -529,6 +558,276 @@ export async function loginUser(
 
   saveDb(db);
   return { success: true, message: "เข้าสู่ระบบสำเร็จ", user, sessionToken };
+}
+
+/**
+ * Request Password Reset OTP
+ */
+export async function requestPasswordReset(identifier: string): Promise<{
+  success: boolean;
+  message: string;
+  email?: string;
+  emailMasked?: string;
+  otpCode?: string;
+}> {
+  const cleanId = identifier.trim();
+  const cleanEmail = cleanId.toLowerCase();
+  const mongo = await getMongoDb();
+  let targetUser: DbUser | null = null;
+
+  if (mongo) {
+    await ensureMongoSeed(mongo);
+    targetUser = (await mongo.collection("users").findOne({
+      $or: [
+        { email: cleanEmail },
+        { name: cleanId },
+        { id: cleanId },
+      ]
+    }, { projection: { _id: 0 } })) as unknown as DbUser | null;
+  } else {
+    const db = ensureDbFile();
+    targetUser =
+      db.users.find(
+        (u) =>
+          u.email.toLowerCase() === cleanEmail ||
+          u.name.toLowerCase() === cleanEmail ||
+          u.id.toLowerCase() === cleanEmail
+      ) || null;
+  }
+
+  if (!targetUser) {
+    return {
+      success: false,
+      message: "ไม่พบบัญชีผู้ใช้หรืออีเมลนี้ในระบบ กรุณาตรวจสอบความถูกต้อง",
+    };
+  }
+
+  const otpCode = generateOtp();
+  const expiresAt = Date.now() + 10 * 60 * 1000;
+  const otpRecord: OtpRecord = {
+    email: targetUser.email,
+    code: otpCode,
+    expiresAt,
+    createdAt: Date.now(),
+    attempts: 0,
+    purpose: "reset_password",
+  };
+
+  if (mongo) {
+    await mongo.collection("otps").deleteMany({ email: targetUser.email, purpose: "reset_password" });
+    await mongo.collection("otps").insertOne(otpRecord);
+  } else {
+    const db = ensureDbFile();
+    db.otps = db.otps.filter(
+      (o) => !(o.email.toLowerCase() === targetUser!.email.toLowerCase() && o.purpose === "reset_password")
+    );
+    db.otps.push(otpRecord);
+    saveDb(db);
+  }
+
+  // Send real email via mailer
+  const emailRes = await sendPasswordResetEmail({
+    toEmail: targetUser.email,
+    recipientName: targetUser.name,
+    otpCode,
+  });
+
+  return {
+    success: true,
+    message: emailRes.success
+      ? `ส่งรหัส OTP กู้คืนรหัสผ่านไปยังอีเมล ${maskEmail(targetUser.email)} เรียบร้อยแล้ว`
+      : `ระบบสร้างรหัส OTP เรียบร้อย (${emailRes.message})`,
+    email: targetUser.email,
+    emailMasked: maskEmail(targetUser.email),
+    otpCode: process.env.NODE_ENV !== "production" ? otpCode : undefined,
+  };
+}
+
+/**
+ * Verify Password Reset OTP (Without resetting yet)
+ */
+export async function verifyPasswordResetOtp(
+  email: string,
+  code: string
+): Promise<{ success: boolean; message: string }> {
+  const cleanEmail = email.trim().toLowerCase();
+  const cleanCode = code.trim();
+  const mongo = await getMongoDb();
+
+  let otpRecord: OtpRecord | null = null;
+
+  if (mongo) {
+    await ensureMongoSeed(mongo);
+    otpRecord = (await mongo.collection("otps").findOne({
+      email: cleanEmail,
+      purpose: "reset_password",
+    })) as unknown as OtpRecord | null;
+  } else {
+    const db = ensureDbFile();
+    otpRecord =
+      db.otps.find(
+        (o) => o.email.toLowerCase() === cleanEmail && o.purpose === "reset_password"
+      ) || null;
+  }
+
+  if (!otpRecord) {
+    return { success: false, message: "ไม่พบรหัส OTP หรือรหัสหมดอายุแล้ว กรุณากดขอรหัสใหม่" };
+  }
+
+  if (Date.now() > otpRecord.expiresAt) {
+    if (mongo) {
+      await mongo.collection("otps").deleteMany({ email: cleanEmail, purpose: "reset_password" });
+    } else {
+      const db = ensureDbFile();
+      db.otps = db.otps.filter(
+        (o) => !(o.email.toLowerCase() === cleanEmail && o.purpose === "reset_password")
+      );
+      saveDb(db);
+    }
+    return { success: false, message: "รหัส OTP หมดอายุแล้ว กรุณากดขอรหัสใหม่อีกครั้ง" };
+  }
+
+  const currentAttempts = (otpRecord.attempts || 0) + 1;
+  if (otpRecord.code !== cleanCode) {
+    if (currentAttempts >= 5) {
+      if (mongo) {
+        await mongo.collection("otps").deleteMany({ email: cleanEmail, purpose: "reset_password" });
+      } else {
+        const db = ensureDbFile();
+        db.otps = db.otps.filter(
+          (o) => !(o.email.toLowerCase() === cleanEmail && o.purpose === "reset_password")
+        );
+        saveDb(db);
+      }
+      return {
+        success: false,
+        message: "คุณกรอกรหัส OTP ไม่ถูกต้องเกิน 5 ครั้ง ระบบได้ยกเลิกรหัสนี้เพื่อความปลอดภัย กรุณากดขอรหัสใหม่",
+      };
+    }
+
+    if (mongo) {
+      await mongo.collection("otps").updateOne(
+        { email: cleanEmail, purpose: "reset_password" },
+        { $set: { attempts: currentAttempts } }
+      );
+    } else {
+      const db = ensureDbFile();
+      const rec = db.otps.find(
+        (o) => o.email.toLowerCase() === cleanEmail && o.purpose === "reset_password"
+      );
+      if (rec) rec.attempts = currentAttempts;
+      saveDb(db);
+    }
+
+    return {
+      success: false,
+      message: `รหัส OTP ไม่ถูกต้อง (เหลือโอกาสกรอกอีก ${5 - currentAttempts} ครั้ง)`,
+    };
+  }
+
+  return { success: true, message: "รหัส OTP ถูกต้อง ดำเนินการตั้งรหัสผ่านใหม่ได้" };
+}
+
+/**
+ * Reset Password with OTP & Auto-login
+ */
+export async function resetPasswordWithOtp(
+  email: string,
+  code: string,
+  newPassword: string
+): Promise<{ success: boolean; message: string; user?: DbUser; sessionToken?: string }> {
+  const verifyRes = await verifyPasswordResetOtp(email, code);
+  if (!verifyRes.success) {
+    return { success: false, message: verifyRes.message };
+  }
+
+  if (!newPassword || newPassword.length < 6) {
+    return { success: false, message: "รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 6 ตัวอักษร" };
+  }
+
+  const cleanEmail = email.trim().toLowerCase();
+  const newSalt = generateSalt();
+  const newHash = hashPassword(newPassword, newSalt, 100000);
+  const updatedAt = new Date().toISOString();
+
+  const mongo = await getMongoDb();
+  if (mongo) {
+    await ensureMongoSeed(mongo);
+    const user = (await mongo.collection("users").findOne({ email: cleanEmail }, { projection: { _id: 0 } })) as unknown as DbUser | null;
+    if (!user) {
+      return { success: false, message: "ไม่พบบัญชีผู้ใช้นี้ในระบบ" };
+    }
+
+    // Update password hash and mark verified
+    await mongo.collection("users").updateOne(
+      { email: cleanEmail },
+      {
+        $set: {
+          passwordHash: newHash,
+          salt: newSalt,
+          isVerified: true,
+          updatedAt,
+        },
+      }
+    );
+
+    // Delete used OTP
+    await mongo.collection("otps").deleteMany({ email: cleanEmail, purpose: "reset_password" });
+
+    // Revoke old sessions & issue fresh session token
+    await mongo.collection("sessions").deleteMany({ userId: user.id });
+    const sessionToken = "sess_" + crypto.randomUUID();
+    await mongo.collection("sessions").insertOne({
+      token: sessionToken,
+      userId: user.id,
+      expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
+    });
+
+    user.passwordHash = newHash;
+    user.salt = newSalt;
+    user.isVerified = true;
+    user.updatedAt = updatedAt;
+
+    return {
+      success: true,
+      message: "รีเซ็ตรหัสผ่านและเข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับสู่ IT Academy!",
+      user,
+      sessionToken,
+    };
+  }
+
+  const db = ensureDbFile();
+  const user = db.users.find((u) => u.email.toLowerCase() === cleanEmail);
+  if (!user) {
+    return { success: false, message: "ไม่พบบัญชีผู้ใช้นี้ในระบบ" };
+  }
+
+  user.passwordHash = newHash;
+  user.salt = newSalt;
+  user.isVerified = true;
+  user.updatedAt = updatedAt;
+
+  db.otps = db.otps.filter(
+    (o) => !(o.email.toLowerCase() === cleanEmail && o.purpose === "reset_password")
+  );
+
+  // Invalidate old sessions for this user
+  db.sessions = db.sessions.filter((s) => s.userId !== user.id);
+  const sessionToken = "sess_" + crypto.randomUUID();
+  db.sessions.push({
+    token: sessionToken,
+    userId: user.id,
+    expiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
+  });
+
+  saveDb(db);
+
+  return {
+    success: true,
+    message: "รีเซ็ตรหัสผ่านและเข้าสู่ระบบสำเร็จ ยินดีต้อนรับกลับสู่ IT Academy!",
+    user,
+    sessionToken,
+  };
 }
 
 export async function validateSession(token: string): Promise<DbUser | null> {

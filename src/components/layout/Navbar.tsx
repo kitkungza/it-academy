@@ -38,7 +38,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-200 dark:border-slate-800 transition-all duration-300">
+    <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-[#E8E1D5] dark:border-slate-800 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -58,10 +58,10 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-sm font-medium transition-colors hover:text-blue-500 ${
+                  className={`text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
                     pathname === link.href
-                      ? "text-blue-600 dark:text-blue-400 font-semibold"
-                      : "text-slate-600 dark:text-slate-300"
+                      ? "text-blue-600 dark:text-blue-400 font-bold"
+                      : "text-slate-700 dark:text-slate-300"
                   }`}
                 >
                   {link.name}
@@ -69,17 +69,17 @@ export default function Navbar() {
               ))}
             </div>
 
-            <div className="flex items-center space-x-4 border-l border-slate-200 dark:border-slate-700 pl-6">
+            <div className="flex items-center space-x-4 border-l border-[#E8E1D5] dark:border-slate-700 pl-6">
               {mounted && (
                 <button
                   onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors"
+                  className="p-2 rounded-full hover:bg-[#F2ECE1] dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-colors"
                   aria-label="Toggle theme"
                 >
                   {theme === "dark" ? (
-                    <Sun className="h-5 w-5" />
+                    <Sun className="h-5 w-5 text-amber-400" />
                   ) : (
-                    <Moon className="h-5 w-5" />
+                    <Moon className="h-5 w-5 text-slate-700" />
                   )}
                 </button>
               )}
@@ -88,7 +88,7 @@ export default function Navbar() {
                 <div className="flex items-center space-x-2">
                   <Link
                     href="/dashboard"
-                    className="flex items-center gap-2 text-xs md:text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-blue-500 dark:hover:text-blue-400 transition-colors bg-slate-100 dark:bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700/60"
+                    className="flex items-center gap-2 text-xs md:text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-blue-500 dark:hover:text-blue-400 transition-colors bg-[#F2ECE1] dark:bg-slate-800/80 px-3 py-1.5 rounded-full border border-[#E8E1D5] dark:border-slate-700/60"
                   >
                     <div className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center font-bold text-xs">
                       {currentUser.name ? currentUser.name.charAt(0) : "U"}

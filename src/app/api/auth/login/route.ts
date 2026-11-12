@@ -5,25 +5,26 @@ import { checkRateLimit, resetRateLimit } from "@/lib/rate-limiter";
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    const { email, password } = body;
+    const inputIdentifier = (body.email || body.username || body.identifier || "").trim();
+    const { password } = body;
 
-    if (!email || !password || typeof email !== "string" || typeof password !== "string") {
+    if (!inputIdentifier || !password || typeof password !== "string") {
       return Response.json(
-        { success: false, message: "กรุณาระบุอีเมลและรหัสผ่านให้ถูกต้อง" },
+        { success: false, message: "กรุณาระบุอีเมลหรือชื่อผู้ใช้ และรหัสผ่านให้ถูกต้อง" },
         { status: 400 }
       );
     }
 
-    const cleanEmail = email.trim().toLowerCase();
-    if (cleanEmail.length > 254 || password.length > 128) {
+    const cleanId = inputIdentifier.toLowerCase();
+    if (cleanId.length > 254 || password.length > 128) {
       return Response.json(
         { success: false, message: "ข้อมูลที่ส่งมีขนาดยาวเกินกำหนด" },
         { status: 400 }
       );
     }
 
-    // Rate Limiting: 5 attempts per 15 minutes per email
-    const limit = checkRateLimit(`login:${cleanEmail}`, 5, 15 * 60 * 1000);
+    // Rate Limiting: 5 attempts per 15 minutes per email/user
+    const limit = checkRateLimit(`login:${cleanId}`, 5, 15 * 60 * 1000);
     if (!limit.allowed) {
       return Response.json(
         {
@@ -37,12 +38,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const result = await loginUser(cleanEmail, password);
+    const result = await loginUser(inputIdentifier, password);
 
     if (result.isUnverified) {
       if (result.otpCode) {
         await sendOtpEmail({
-          toEmail: result.user?.email || email,
+          toEmail: result.user?.email || inputIdentifier,
           recipientName: result.user?.name,
           otpCode: result.otpCode,
         });
@@ -78,7 +79,7 @@ export async function POST(req: Request) {
     };
 
     // Reset rate limiter on successful authentication
-    resetRateLimit(`login:${cleanEmail}`);
+    resetRateLimit(`login:${cleanId}`);
 
     return Response.json({
       success: true,

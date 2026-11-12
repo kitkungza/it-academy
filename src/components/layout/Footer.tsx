@@ -10,7 +10,7 @@ export default function Footer() {
     return null;
   }
   return (
-    <footer className="bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 relative overflow-hidden">
+    <footer className="bg-[#F5F1EA] dark:bg-slate-950 border-t border-[#E8E1D5] dark:border-slate-800 relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-teal-400 to-purple-500"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">

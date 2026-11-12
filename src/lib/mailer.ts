@@ -6,6 +6,12 @@ export interface SendOtpEmailParams {
   otpCode: string;
 }
 
+export interface SendPasswordResetEmailParams {
+  toEmail: string;
+  recipientName?: string;
+  otpCode: string;
+}
+
 /**
  * Dispatch real OTP verification email using SMTP (e.g. Gmail / Brevo / Custom SMTP)
  * or Resend HTTP API.
@@ -95,6 +101,94 @@ export async function sendOtpEmail({
   };
 }
 
+/**
+ * Dispatch Password Reset OTP Email
+ */
+export async function sendPasswordResetEmail({
+  toEmail,
+  recipientName,
+  otpCode,
+}: SendPasswordResetEmailParams): Promise<{ success: boolean; message: string }> {
+  const cleanEmail = toEmail.trim().toLowerCase();
+
+  // 1. Try Resend HTTP API if configured
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (resendApiKey) {
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: process.env.SMTP_FROM || "IT Academy Security <onboarding@resend.dev>",
+          to: [cleanEmail],
+          subject: `[IT Academy] รหัสรีเซ็ตรหัสผ่านของคุณคือ ${otpCode}`,
+          html: generatePasswordResetHtmlEmail({ recipientName, otpCode }),
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        console.log(`[Email Dispatch - Resend] Sent password reset OTP to ${cleanEmail}`);
+        return { success: true, message: `ส่งรหัสรีเซ็ตรหัสผ่านไปยัง ${cleanEmail} สำเร็จ` };
+      } else {
+        console.error("[Email Dispatch - Resend] Error:", data);
+      }
+    } catch (e) {
+      console.error("[Email Dispatch - Resend] Exception:", e);
+    }
+  }
+
+  // 2. Try SMTP Transport
+  const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
+  const smtpPort = Number(process.env.SMTP_PORT) || 465;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPass = process.env.SMTP_PASS;
+
+  if (smtpUser && smtpPass) {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+      });
+
+      const fromAddress = process.env.SMTP_FROM || `"IT Academy Security" <${smtpUser}>`;
+
+      await transporter.sendMail({
+        from: fromAddress,
+        to: cleanEmail,
+        subject: `[IT Academy] รหัสรีเซ็ตรหัสผ่าน: ${otpCode}`,
+        html: generatePasswordResetHtmlEmail({ recipientName, otpCode }),
+      });
+
+      console.log(`[Email Dispatch - SMTP] Sent password reset OTP to ${cleanEmail} via ${smtpHost}`);
+      return { success: true, message: `ส่งรหัสรีเซ็ตรหัสผ่านไปยัง ${cleanEmail} เรียบร้อยแล้ว` };
+    } catch (error: any) {
+      console.error("[Email Dispatch - SMTP] Failed to send password reset email:", error.message);
+      return {
+        success: false,
+        message: `ไม่สามารถส่งอีเมลไปยัง ${cleanEmail} ได้ (${error.message})`,
+      };
+    }
+  }
+
+  // 3. Fallback when SMTP is not configured yet
+  console.warn(
+    `[Email Dispatch] No SMTP or Resend credentials configured. Mock sending password reset OTP ${otpCode} to ${cleanEmail}`
+  );
+  return {
+    success: true,
+    message: `ระบบสร้างรหัสรีเซ็ตเรียบร้อย (รอการตั้งค่า SMTP ใน Environment Variables เพื่อส่งเข้ากล่องจดหมายจริง)`,
+  };
+}
+
 function generateOtpHtmlEmail({
   recipientName,
   otpCode,
@@ -164,6 +258,95 @@ function generateOtpHtmlEmail({
             <td style="padding: 20px 36px 30px 36px; border-top: 1px solid #1e293b; text-align: center; background-color: #090d16;">
               <p style="margin: 0 0 6px 0; font-size: 11px; color: #64748b;">
                 หากท่านไม่ได้เป็นผู้ทำรายการนี้ ท่านสามารถเพิกเฉยต่ออีเมลฉบับนี้ได้อย่างปลอดภัย
+              </p>
+              <p style="margin: 0; font-size: 10px; color: #475569;">
+                © 2026 IT Academy. All rights reserved. • ศูนย์นวัตกรรมอาชีวศึกษา
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
+function generatePasswordResetHtmlEmail({
+  recipientName,
+  otpCode,
+}: {
+  recipientName?: string;
+  otpCode: string;
+}): string {
+  const displayName = recipientName ? `คุณ${recipientName}` : "ผู้ใช้งาน IT Academy";
+
+  return `
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>กู้คืนและรีเซ็ตรหัสผ่าน - IT Academy</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0b0f19; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #f1f5f9;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #0b0f19; padding: 40px 10px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" style="max-width: 540px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border-radius: 24px; border: 1px solid #334155; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+          <!-- Header -->
+          <tr>
+            <td style="padding: 36px 36px 20px 36px; text-align: center;">
+              <div style="display: inline-block; width: 56px; height: 56px; line-height: 56px; border-radius: 16px; background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); font-size: 28px; box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.4);">
+                🔐
+              </div>
+              <h1 style="margin: 16px 0 6px 0; font-size: 22px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">
+                ตั้งรหัสผ่านใหม่ (Password Reset)
+              </h1>
+              <p style="margin: 0; font-size: 13px; color: #94a3b8;">
+                ระบบความปลอดภัยบัญชีผู้ใช้งาน IT Academy
+              </p>
+            </td>
+          </tr>
+
+          <!-- Content -->
+          <tr>
+            <td style="padding: 0 36px 30px 36px; text-align: center;">
+              <p style="margin: 0 0 16px 0; font-size: 15px; color: #cbd5e1; line-height: 1.6;">
+                สวัสดีครับ <strong>${displayName}</strong><br/>
+                เราได้รับการร้องขอให้ตั้งรหัสผ่านใหม่สำหรับบัญชี IT Academy ของท่าน<br/>
+                กรุณานำรหัสผ่านใช้ครั้งเดียว (OTP 6 หลัก) ด้านล่างไปกรอกที่หน้าเว็บไซต์:
+              </p>
+
+              <!-- OTP Big Badge -->
+              <div style="margin: 22px auto; padding: 18px 24px; background: #020617; border: 2px dashed #f59e0b; border-radius: 18px; max-width: 320px;">
+                <span style="font-family: 'Courier New', Courier, monospace; font-size: 38px; font-weight: 800; letter-spacing: 10px; color: #fbbf24; display: block; margin-left: 10px;">
+                  ${otpCode}
+                </span>
+              </div>
+
+              <p style="margin: 0; font-size: 12px; color: #f59e0b; font-weight: 600;">
+                ⏱️ รหัสนี้มีอายุการใช้งาน 10 นาที (ใช้ได้เพียง 1 ครั้งเท่านั้น)
+              </p>
+
+              <div style="margin-top: 24px; padding: 14px; background: rgba(15, 23, 42, 0.7); border-radius: 14px; border: 1px solid #334155; text-align: left;">
+                <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; color: #f1f5f9;">
+                  🛡️ ความปลอดภัยบัญชีของคุณ:
+                </p>
+                <p style="margin: 0; font-size: 11px; color: #94a3b8; line-height: 1.6;">
+                  • หากท่าน<strong>ไม่ได้เป็นผู้ขอตั้งรหัสผ่านใหม่</strong> บัญชีของท่านยังคงปลอดภัย ท่านสามารถเพิกเฉยต่ออีเมลฉบับนี้ได้โดยไม่ต้องดำเนินการใดๆ<br/>
+                  • เพื่อความปลอดภัยสูงสุด ห้ามแจ้งรหัส OTP แก่บุคคลอื่น
+                </p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px 36px 30px 36px; border-top: 1px solid #1e293b; text-align: center; background-color: #090d16;">
+              <p style="margin: 0 0 6px 0; font-size: 11px; color: #64748b;">
+                อีเมลนี้สร้างขึ้นโดยระบบอัตโนมัติ กรุณาอย่าตอบกลับอีเมลนี้
               </p>
               <p style="margin: 0; font-size: 10px; color: #475569;">
                 © 2026 IT Academy. All rights reserved. • ศูนย์นวัตกรรมอาชีวศึกษา

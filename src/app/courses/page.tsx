@@ -68,7 +68,7 @@ export default function CoursesPage() {
 
   const renderCourseCard = (course: (typeof courses)[0]) => (
     <Link href={`/courses/${course.id}`} key={course.id} className="block h-full">
-      <div className="group h-full bg-white dark:bg-dark-900 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-primary-500/10 border border-slate-200 dark:border-slate-800 transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+      <div className="group h-full bg-white dark:bg-dark-900 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm shadow-amber-950/5 hover:shadow-xl hover:shadow-primary-500/10 border border-[#E8E1D5] dark:border-slate-800 transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
         <div
           className={`h-28 sm:h-32 bg-gradient-to-r ${course.gradient} relative overflow-hidden shrink-0`}
           style={{
@@ -133,25 +133,25 @@ export default function CoursesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-dark-950 py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8 transition-colors duration-300">
+    <div className="min-h-screen bg-[#FAF7F2] dark:bg-dark-950 py-8 sm:py-12 px-3.5 sm:px-6 lg:px-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto pt-4 sm:pt-8">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-100 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 text-xs font-semibold mb-3 sm:mb-4 border border-primary-200 dark:border-primary-800">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-blue-500/10 dark:bg-primary-950/60 text-blue-700 dark:text-primary-300 text-xs font-semibold mb-3 sm:mb-4 border border-blue-500/20">
             <Sparkles className="w-3.5 h-3.5" />
             <span>หลักสูตรมาตรฐานเข้มข้น {courses.length} สาขาวิชา</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold gradient-text mb-3 sm:mb-4">
             หลักสูตรทั้งหมด
           </h1>
-          <p className="text-sm sm:text-base lg:text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed px-2 sm:px-0">
+          <p className="text-sm sm:text-base lg:text-lg text-slate-700 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed px-2 sm:px-0">
             เลือกเรียนได้ทั้ง <strong>หลักสูตรสายงานวิชาชีพ IT</strong> สำหรับสร้างเส้นทางอาชีพวิศวกรซอฟต์แวร์ และ <strong>หลักสูตรภาษาโปรแกรมมิ่ง</strong> เพื่อฝึกฝนทักษะการเขียนโค้ดเชิงลึก
           </p>
         </div>
 
         {/* Category Switcher Tabs (Responsive for Mobile, iPad, and Desktop) */}
         <div className="flex justify-center mb-6 sm:mb-8 px-1 sm:px-0">
-          <div className="w-full sm:w-auto inline-flex p-1 sm:p-1.5 rounded-2xl bg-white dark:bg-dark-900 border border-slate-200 dark:border-slate-800 shadow-sm gap-1 overflow-x-auto sm:overflow-visible hide-scrollbar">
+          <div className="w-full sm:w-auto inline-flex p-1 sm:p-1.5 rounded-2xl bg-white dark:bg-dark-900 border border-[#E8E1D5] dark:border-slate-800 shadow-sm gap-1 overflow-x-auto sm:overflow-visible hide-scrollbar">
             <button
               onClick={() => setSelectedCategory("all")}
               className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${
@@ -212,7 +212,7 @@ export default function CoursesPage() {
         </div>
 
         {/* Search and Difficulty Filter */}
-        <div className="flex flex-col md:flex-row gap-3 sm:gap-4 mb-8 sm:mb-10 justify-between items-center bg-white dark:bg-dark-900 p-3 sm:p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+        <div className="flex flex-col md:flex-row gap-3 sm:gap-4 mb-8 sm:mb-10 justify-between items-center bg-white dark:bg-dark-900 p-3 sm:p-4 rounded-2xl shadow-sm border border-[#E8E1D5] dark:border-slate-800">
           <div className="relative w-full md:w-96">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-4 w-4 sm:h-5 sm:w-5 text-slate-400" />
