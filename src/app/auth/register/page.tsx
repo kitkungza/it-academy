@@ -329,7 +329,7 @@ export default function RegisterPage() {
                   onChange={(e) => setInstitution(e.target.value)}
                   list="colleges-list"
                   className="w-full px-4 py-2.5 rounded-xl dark:bg-slate-900 bg-white border dark:border-slate-700 border-slate-300 dark:text-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm transition-all"
-                  placeholder="เช่น โรงเรียนสวนกุหลาบวิทยาลัย หรือ วิทยาลัยเทคนิคเชียงใหม่"
+                  placeholder="เช่น โรงเรียนสุราษฎร์ธานี หรือ โรงเรียนสวนกุหลาบวิทยาลัย"
                   required
                 />
                 <datalist id="colleges-list">
